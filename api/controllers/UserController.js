@@ -33,11 +33,9 @@ export const SignUp = async (req, res) => {
     const hashPassword = customHash(password);
 
     const newUser = new User({
-      name : userName,
+      userName : name,
       email,
       password: hashPassword,
-      phone,
-      address,
     });
     const savedUser = await newUser.save();
     return res
