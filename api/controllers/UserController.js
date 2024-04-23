@@ -17,6 +17,7 @@ const customHash = (str) => {
 }
 
 export const SignUp = async (req, res) => {
+
   try {
     const { userName, email, password, phone, address } = req.body;
     if (!userName || !email || !password || !phone || !address) {
@@ -52,3 +53,35 @@ export const SignUp = async (req, res) => {
       .json({ message: "Internal Server Error", success: false });
   }
 };
+
+export const SignIn = async (req, res) => {
+    try {
+      const {  email, password} = req.body;
+      if ( !email || !password ) {
+        return res.status(400).json({ message: "Bad Request", success: false });
+      }
+        const foundUser = await User.findOne({ email }).lean();
+      if (foundUser.length < 0) {
+        return res
+          .status(400)
+          .json({ message: "Email Doesn't exists", success: false });
+      }
+        const hashedUserInputPassword = customHash(password);
+        if (foundUser?.password != hashedUserInputPassword) {
+            return res.status(200).json({ message: "Password doesn't match" });
+        }
+        return res.status(201).json({
+            message: "User LoggedIn successfully", user: {
+              _id: foundUser?._id,
+              name: foundUser?.userName,
+              email: foundUser?.email,
+              phone: foundUser?.phone,
+              adddress: foundUser?.address,
+      }  });
+    } catch (error) {
+      console.error("Error creating user:", error);
+      return res
+        .status(500)
+        .json({ message: "Internal Server Error", success: false });
+    }
+  };
