@@ -20,8 +20,8 @@ const customHash = (str) => {
 export const SignUp = async (req, res) => {
 
   try {
-    const { userName, email, password, phone, address } = req.body;
-    if (!userName || !email || !password || !phone || !address) {
+    const { name, email, password} = req.body;
+    if (!name || !email || !password ) {
       return res.status(400).json({ message: "Bad Request", success: false });
     }
     const userEmail = await User.find({ email }).lean();
@@ -29,11 +29,11 @@ export const SignUp = async (req, res) => {
       return res
         .status(400)
         .json({ message: "Email already exists", success: false });
-    }
+    } 
     const hashPassword = customHash(password);
 
     const newUser = new User({
-      userName,
+      name : userName,
       email,
       password: hashPassword,
       phone,
