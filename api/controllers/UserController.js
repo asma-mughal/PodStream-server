@@ -1,3 +1,5 @@
+import { hash } from "bcrypt";
+import { hashPassword } from "../helpers/passwordCheck.js";
 import { User } from "../models/User.js";
 
 
@@ -11,7 +13,9 @@ export const SignUp = async (req, res) => {
         if (userEmail.length > 0) {
             return res.status(400).json({ message: "Email already exists", success: false });
         }
-        const newUser = new User({ userName, email, password, phone, address });
+        const hashPass = await hashPassword(password)
+        console.log(hashPass)
+        const newUser = new User({ userName, email, password: hashPass, phone, address });
         const savedUser = await newUser.save();
         return res.status(200).json({ message: "User created successfully", success: true, user: savedUser });
     } catch (error) {
