@@ -1,5 +1,6 @@
 
 import { User } from "../models/User.js";
+import JWT from 'jsonwebtoken';
 const customHash = (str) => {
     let hash = 0;
 
@@ -70,6 +71,10 @@ export const SignIn = async (req, res) => {
         if (foundUser?.password != hashedUserInputPassword) {
             return res.status(200).json({ message: "Password doesn't match" });
         }
+        const token = JWT.sign({ _id: foundUser?.id }, "test", {
+            expiresIn:"4d"
+        })
+
         return res.status(201).json({
             message: "User LoggedIn successfully", user: {
               _id: foundUser?._id,
@@ -77,7 +82,7 @@ export const SignIn = async (req, res) => {
               email: foundUser?.email,
               phone: foundUser?.phone,
               adddress: foundUser?.address,
-      }  });
+      } , token });
     } catch (error) {
       console.error("Error creating user:", error);
       return res
