@@ -7,8 +7,9 @@ import userRoute from './api/routes/userRoute.js'
 const app = express();
 
 app.use(bodyParser.json());
-app.use(cors());
-
+app.use(cors({
+    origin: ['https://podstream-client.vercel.app', 'http://localhost:5174/']
+  }));
 app.get('/', (req, res) => {
     res.send('Hello, welcome to our Node.js backend!');
 });
