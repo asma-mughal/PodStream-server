@@ -4,10 +4,10 @@ import { User } from "../models/User.js";
 
 export const createPodcast = async (req, res) => {
   try {
-      const user = await User?.findById({ _id: req.params.id });
-      
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
+    const user = await User?.findById({ _id: req.params.id });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
     let episodeList = [];
     await Promise.all(
@@ -39,7 +39,7 @@ export const createPodcast = async (req, res) => {
       { new: true }
     );
 
-    res.status(201).json(savedPodcast);
+    res.status(201).json({ message: "Podcast Saved", savedPodcast });
   } catch (error) {
     console.error("Error creating Podcast", error);
     return res
@@ -86,40 +86,125 @@ export const getAllPodcast = async (req, res) => {
 };
 export const getPodcastById = async (req, res, next) => {
   try {
-    const podcast = await Podstream.findById({_id : req.params.podcastid})
+    const podcast = await Podstream.findById({ _id: req.params.podcastid })
       .populate("creator", "name img")
       .populate("episodes");
     return res.status(200).json(podcast);
   } catch (err) {
-      console.log(err)
+    console.log(err);
   }
 };
-export const favoritPodcast = async(req, res) => {
-    try {
-        const user = await User.findById({ _id: req.params.id })
-        const podcast = await Podstream.findById({ _id: req.body.podid })
-        if (user.id === podcast.creator) {
-            return res.status(400).json({message : "You can't favourite your own Podcast"})
-        }
-        let found = false;
-        await Promise.all(user?.favorits?.map(async (item) => {
-            if (req.body.podid === item) {
-                found = true;
-                await User.findByIdAndUpdate(user?._id, {
-                    $pull: { favorits: req.body.podid },
-                }, {new : true})
-            }
-        }))
-        if (!found) {
-            const favouriteId = await User.findByIdAndUpdate(user.id, {
-                $push : { favorits: req.body.podid },
-            }, { new: true })
-            
-            res.status(200).json({ message: "Added to favorit" });
-        }
-    } catch (error) {
-      
-    console.error("Error favourite the podcasts:", error);
-    res.status(500).json({ message: "Internal Server Error", success: false });  
+export const favoritPodcast = async (req, res) => {
+  try {
+    const user = await User.findById({ _id: req.params.id });
+    const podcast = await Podstream.findById({ _id: req.body.podid });
+    if (user.id === podcast.creator) {
+      return res
+        .status(400)
+        .json({ message: "You can't favourite your own Podcast" });
     }
-}
+    let found = false;
+    await Promise.all(
+      user?.favorits?.map(async (item) => {
+        if (req.body.podid === item) {
+          found = true;
+          await User.findByIdAndUpdate(
+            user?._id,
+            {
+              $pull: { favorits: req.body.podid },
+            },
+            { new: true }
+          );
+        }
+      })
+    );
+    if (!found) {
+      const favouriteId = await User.findByIdAndUpdate(
+        user.id,
+        {
+          $push: { favorits: req.body.podid },
+        },
+        { new: true }
+      );
+
+      res.status(200).json({ message: "Added to favorite" });
+    }
+  } catch (error) {
+    console.error("Error favourite the podcasts:", error);
+    res.status(500).json({ message: "Internal Server Error", success: false });
+  }
+};
+export const addView = async (req, res) => {
+  try {
+    console.log(req.params.podid);
+    const returnedValue = await Podstream.findByIdAndUpdate(req.params.podid, {
+      $inc: { views: 1 },
+    });
+    console.log(returnedValue);
+    res.status(200).json("The view has been increased.");
+  } catch (error) {
+    console.error("Error favourite the podcasts:", error);
+    res.status(500).json({ message: "Internal Server Error", success: false });
+  }
+};
+export const random = async (req, res) => {
+  try {
+    const podcasts = await Podstream.aggregate([{ $sample: { size: 40 } }])
+      .populate("creator", "name img")
+      .populate("episodes");
+    res.status(200).json(podcasts);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Internal Server Error", success: false });
+  }
+};
+
+export const mostPopular = async (req, res) => {
+    try {
+      const podcasts = await Podstream.find().sort({views: -1})
+        .populate("creator", "name img")
+        .populate("episodes");
+      res.status(200).json(podcasts);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+};
+export const getByTag = async (req, res) => {
+    try {
+        const tagstoFInd = req.query.tags.split(",")
+        console.log(tagstoFInd)
+      const podcasts = await Podstream.find({tags : {$in : tagstoFInd}})
+        .populate("creator", "name img")
+        .populate("episodes");
+      res.status(200).json(podcasts);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+};  
+export const getByCategory = async (req, res) => {
+    try {
+        const categoryToFind = req.query.category
+        console.log(categoryToFind)
+      const podcasts = await Podstream.find({ category: { $regex: req.query, $options: "i" },})
+        .populate("creator", "name img")
+        .populate("episodes");
+      res.status(200).json(podcasts);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+};  
+export const search = async (req, res, next) => {
+    const query = req.query.q;
+    try {
+      const podcast = await Podstream.find({
+        name: { $regex: query, $options: "i" },
+      }).populate("creator", "name img").populate("episodes").limit(40);
+      res.status(200).json(podcast);
+    } catch (err) {
+        console.log(err)
+    }
+  };
+//https://lnkd.in/draWeiip
