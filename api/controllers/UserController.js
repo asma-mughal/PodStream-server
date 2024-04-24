@@ -116,3 +116,15 @@ export const ResetPassword = async (req, res) => {
     .json({ message: "Internal Server Error", success: false });
 }
 };
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const user = await User.find().lean()
+  res.json({user})  
+  } catch (error) {
+    console.error("Error Fetching Users:", error);
+  return res
+    .status(500)
+    .json({ message: "Internal Server Error", success: false });
+}
+};

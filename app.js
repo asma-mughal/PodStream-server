@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import userRoute from './api/routes/userRoute.js'
+import podcastRoute from './api/routes/podcastRoute.js';
 const app = express();
 
 app.use(bodyParser.json());
@@ -14,6 +15,7 @@ app.get('/', (req, res) => {
     res.send('Hello, welcome to our Node.js backend!');
 });
 app.use('/userRoute', userRoute)
+app.use('/podcastRoute',podcastRoute)
 mongoose
     .connect('mongodb+srv://asmamughal097:016wPL37Yoscp7Eb@cluster0.jlpafag.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
   .then(() => {
