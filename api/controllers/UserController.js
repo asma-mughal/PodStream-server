@@ -73,7 +73,7 @@ export const SignIn = async (req, res) => {
       message: "User LoggedIn successfully",
       user: {
         _id: foundUser?._id,
-        name: foundUser?.userName,
+        userName: foundUser?.userName,
         email: foundUser?.email,
       },
       token,
