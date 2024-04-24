@@ -119,8 +119,23 @@ export const ResetPassword = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
   try {
-    const user = await User.find().lean()
-  res.json({user})  
+    const user = await User.find().populate({
+      path: "podcasts",
+      populate: {
+          path: "creator",
+          select: "name img",
+      }
+  }
+  ).populate(
+      {
+          path: "favorits",
+          populate: {
+              path: "creator",
+              select: "name img",
+          }
+      }
+  );
+  res.status(200).json(user);
   } catch (error) {
     console.error("Error Fetching Users:", error);
   return res

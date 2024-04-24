@@ -76,10 +76,8 @@ export const addEpisodes = async (req, res) => {
 };
 export const getAllPodcast = async (req, res) => {
   try {
-    const podcasts = await Podstream.find()
-      .populate("creator", "name img")
-      .populate("episodes");
-    res.json(podcasts);
+    const podcasts = await Podstream.find().populate("creator", "name img").populate("episodes");
+    return res.status(200).json(podcasts);
   } catch (error) {
     console.error("Error fetching all podcasts:", error);
     res.status(500).json({ message: "Internal Server Error", success: false });
