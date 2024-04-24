@@ -8,9 +8,7 @@ import podcastRoute from './api/routes/podcastRoute.js';
 const app = express();
 
 app.use(bodyParser.json());
-app.use(cors({
-    origin: ['https://podstream-client.vercel.app', 'http://localhost:5174/']
-  }));
+app.use(cors());
 app.get('/', (req, res) => {
     res.send('Hello, welcome to our Node.js backend!');
 });

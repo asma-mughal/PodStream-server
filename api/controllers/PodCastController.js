@@ -3,8 +3,9 @@ import Podstream from "../models/Podstream.js";
 import { User } from "../models/User.js";
 
 export const createPodcast = async (req, res) => {
-  try {
-    const user = await User?.findById({ _id: req.params.id });
+    try {
+        
+    const user = await User?.findById({ _id: req.body.creator });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -185,18 +186,18 @@ export const getByTag = async (req, res) => {
 };  
 export const getByCategory = async (req, res) => {
     try {
-        const categoryToFind = req.query.category
-        console.log(categoryToFind)
-      const podcasts = await Podstream.find({ category: { $regex: req.query, $options: "i" },})
+        const categoryToFind = req.query.q
+      const podcasts = await Podstream.find({ category: { $regex: categoryToFind, $options: "i" },})
         .populate("creator", "name img")
-        .populate("episodes");
+          .populate("episodes");
+    
       res.status(200).json(podcasts);
     } catch (err) {
       console.log(err);
       res.status(500).json({ message: "Internal Server Error", success: false });
     }
 };  
-export const search = async (req, res, next) => {
+export const search = async (req, res) => {
     const query = req.query.q;
     try {
       const podcast = await Podstream.find({
@@ -206,5 +207,5 @@ export const search = async (req, res, next) => {
     } catch (err) {
         console.log(err)
     }
-  };
-//https://lnkd.in/draWeiip
+};
+  

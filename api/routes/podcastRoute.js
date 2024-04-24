@@ -3,7 +3,7 @@ import { addEpisodes, addView, createPodcast, favoritPodcast, getAllPodcast, get
 
 const router = express.Router()
 //Id is called as UserID
-router.post(`/createPodcast/:id`, createPodcast)
+router.post(`/createPodcast`, createPodcast)
 router.post(`/createEpisode/:id`, addEpisodes)
 router.get(`/`, getAllPodcast)
 router.get(`/podcastById/:podcastid`, getPodcastById)

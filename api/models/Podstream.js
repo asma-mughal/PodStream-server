@@ -28,7 +28,7 @@ const PodcastsSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        default: "podcast",
+        default: "podcastvalue",
     },
     views: {
         type: Number,
