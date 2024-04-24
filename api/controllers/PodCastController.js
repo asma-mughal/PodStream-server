@@ -4,7 +4,11 @@ import { User } from "../models/User.js";
 
 export const createPodcast = async (req, res) => {
   try {
-    const user = await User?.findById({ _id: req.params.id });
+      const user = await User?.findById({ _id: req.params.id });
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
     let episodeList = [];
     await Promise.all(
       req.body.episodes.map(async (item) => {
