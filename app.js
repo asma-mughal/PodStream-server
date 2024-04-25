@@ -28,3 +28,5 @@ mongoose
         console.error('MongoDB connection error:', err);
     });
 export default app;
+
+console.log('hellow')
