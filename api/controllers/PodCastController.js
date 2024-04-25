@@ -3,6 +3,7 @@ import Podstream from "../models/Podstream.js";
 import { User } from "../models/User.js";
 
 export const createPodcast = async (req, res) => {
+  //console.log(req.body.creator);
     try {
         
     const user = await User?.findById({ _id: req.body.creator });
@@ -76,7 +77,7 @@ export const addEpisodes = async (req, res) => {
 };
 export const getAllPodcast = async (req, res) => {
   try {
-    const podcasts = await Podstream.find().populate("creator", "name img").populate("episodes");
+    const podcasts = await Podstream.find().populate("creator", "userName img").populate("episodes");
     return res.status(200).json(podcasts);
   } catch (error) {
     console.error("Error fetching all podcasts:", error);
@@ -86,7 +87,7 @@ export const getAllPodcast = async (req, res) => {
 export const getPodcastById = async (req, res, next) => {
   try {
     const podcast = await Podstream.findById({ _id: req.params.podcastid })
-      .populate("creator", "name img")
+      .populate("creator", "userName img")
       .populate("episodes");
     return res.status(200).json(podcast);
   } catch (err) {
@@ -97,7 +98,7 @@ export const favoritPodcast = async (req, res) => {
   try {
     const user = await User.findById({ _id: req.params.id });
     const podcast = await Podstream.findById({ _id: req.body.podid });
-    if (user.id === podcast.creator) {
+    if (user._id.toString() === podcast.creator.toString()) {
       return res
         .status(400)
         .json({ message: "You can't favourite your own Podcast" });
@@ -161,7 +162,7 @@ export const random = async (req, res) => {
 export const mostPopular = async (req, res) => {
     try {
       const podcasts = await Podstream.find().sort({views: -1})
-        .populate("creator", "name img")
+        .populate("creator", "userName img")
         .populate("episodes");
       res.status(200).json(podcasts);
     } catch (err) {
@@ -174,7 +175,7 @@ export const getByTag = async (req, res) => {
         const tagstoFInd = req.query.tags.split(",")
         console.log(tagstoFInd)
       const podcasts = await Podstream.find({tags : {$in : tagstoFInd}})
-        .populate("creator", "name img")
+        .populate("creator", "userName img")
         .populate("episodes");
       res.status(200).json(podcasts);
     } catch (err) {
@@ -186,7 +187,7 @@ export const getByCategory = async (req, res) => {
     try {
         const categoryToFind = req.query.q
       const podcasts = await Podstream.find({ category: { $regex: categoryToFind, $options: "i" },})
-        .populate("creator", "name img")
+        .populate("creator", "userName img")
           .populate("episodes");
     
       res.status(200).json(podcasts);
@@ -200,7 +201,7 @@ export const search = async (req, res) => {
     try {
       const podcast = await Podstream.find({
         name: { $regex: query, $options: "i" },
-      }).populate("creator", "name img").populate("episodes").limit(40);
+      }).populate("creator", "userName img").populate("episodes").limit(40);
       res.status(200).json(podcast);
     } catch (err) {
         console.log(err)

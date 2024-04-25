@@ -118,8 +118,9 @@ export const ResetPassword = async (req, res) => {
 };
 
 export const getAllUsers = async (req, res) => {
+
   try {
-    const user = await User.find().populate({
+    const user = await User.findById({_id :req.params.id}).populate({
       path: "podcasts",
       populate: {
           path: "creator",

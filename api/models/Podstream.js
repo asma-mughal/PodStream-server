@@ -12,6 +12,7 @@ const PodcastsSchema = new mongoose.Schema({
     thumbnail: {
         type: String,
         default: "",
+        maxlength: 10000000000000
     },
     creator: {
         type: mongoose.Schema.Types.ObjectId,

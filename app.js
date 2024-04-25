@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 import userRoute from './api/routes/userRoute.js'
 import podcastRoute from './api/routes/podcastRoute.js';
 const app = express();
-
+app.use(express.json({ limit: '20mb' }));
 app.use(bodyParser.json());
 app.use(cors());
 app.get('/', (req, res) => {

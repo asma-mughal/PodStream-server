@@ -1,5 +1,5 @@
 import express from 'express';
-import { addEpisodes, addView, createPodcast, favoritPodcast, getAllPodcast, getByCategory, getByTag, getPodcastById, mostPopular, random } from '../controllers/PodCastController.js';
+import { addEpisodes, addView, createPodcast, favoritPodcast, getAllPodcast, getByCategory, getByTag, getPodcastById, mostPopular, random, search } from '../controllers/PodCastController.js';
 
 const router = express.Router()
 //Id is called as UserID
@@ -13,4 +13,5 @@ router.get(`/random`, random)
 router.get(`/mostPopular`, mostPopular)
 router.get('/bytag', getByTag);
 router.get('/bycategory', getByCategory);
+router.get('/search', search);
 export default router;
