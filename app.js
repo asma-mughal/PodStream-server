@@ -8,7 +8,11 @@ import podcastRoute from './api/routes/podcastRoute.js';
 const app = express();
 app.use(express.json({ limit: '20mb' }));
 app.use(bodyParser.json());
-app.use(cors());
+const corsConfig = {
+    credentials: true,
+    origin: true,
+};
+app.use(cors(corsConfig));
 app.get('/', (req, res) => {
     res.send('Hello, welcome to our Node.js backend!');
 });
@@ -24,4 +28,3 @@ mongoose
         console.error('MongoDB connection error:', err);
     });
 export default app;
-console.log('hellow')
