@@ -136,11 +136,9 @@ export const favoritPodcast = async (req, res) => {
 };
 export const addView = async (req, res) => {
   try {
-    console.log(req.params.podid);
     const returnedValue = await Podstream.findByIdAndUpdate(req.params.podid, {
       $inc: { views: 1 },
     });
-    console.log(returnedValue);
     res.status(200).json("The view has been increased.");
   } catch (error) {
     console.error("Error favourite the podcasts:", error);
